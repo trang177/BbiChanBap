@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy 100 Days</title>
+  <style>
+    :root{--accent:#ff6b9f;--accent2:#ffdc8a;--bg:#0b0711}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:#fff;background: radial-gradient(circle at center, #1a0f2c 0%, #050309 100%);}
+
+    /* INTRO SCREEN */
+    #introScreen{position:absolute;inset:0;background:radial-gradient(circle at center,#ff6b9f, #ffdc8a);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;color:#fff;text-align:center;padding:20px}
+    #introScreen h2{font-size:36px;margin:12px 0;color:#fff;text-shadow:0 0 8px #ff6b9f;}
+    #introScreen input{margin-top:12px;padding:10px 14px;border-radius:10px;border:none;font-size:18px;}
+    #introScreen button{margin-top:20px;padding:12px 24px;border:none;border-radius:12px;background:linear-gradient(90deg,#ff6b9f,#ffdc8a);color:#111;font-weight:700;cursor:pointer;font-size:18px;}
+
+    /* HERO */
+    .hero{height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:20px;display:none}
+    .hero-bg{position:absolute;inset:0;background-image:linear-gradient(180deg, rgba(255,107,159,0.2), rgba(255,220,138,0.15));pointer-events:none;mix-blend-mode:screen;}
+    .container{z-index:5;max-width:1100px;width:100%;display:grid;grid-template-columns:1fr 420px;gap:30px;align-items:center}
+
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));border-radius:16px;padding:28px;box-shadow:0 10px 40px rgba(255,107,159,0.4);backdrop-filter: blur(8px);border:1px solid rgba(255,107,159,0.2);}
+    h1{font-size:48px;margin:0 0 12px;letter-spacing:2px;color:var(--accent);text-shadow:0 0 8px var(--accent),0 0 16px var(--accent2);}
+    .sub{opacity:0.9;margin-bottom:16px;color:#ffdc8a;text-shadow:0 0 6px #ff6b9f;}
+
+    .typing{font-size:20px;height:52px;display:flex;align-items:center;color:#fff;}
+    .typing .cursor{width:3px;height:26px;background:var(--accent2);margin-left:8px;animation:blink 1s infinite}
+    @keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
+
+    .count{display:flex;gap:14px;margin-top:18px}
+    .count .box{background:rgba(255,220,138,0.1);padding:14px 18px;border-radius:12px;min-width:72px;text-align:center;color:#111;font-weight:700;box-shadow:0 6px 18px rgba(255,107,159,0.3);}
+    .count .num{font-size:22px;color:var(--accent2);}
+
+    .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
+    .gallery img{width:100%;height:130px;object-fit:cover;border-radius:12px;cursor:pointer;transform-origin:center;transition:transform .3s ease, box-shadow .3s ease;box-shadow:0 4px 16px rgba(255,107,159,0.3);}
+    .gallery img:hover{transform:scale(1.08);box-shadow:0 12px 40px rgba(255,220,138,0.6);}
+
+    .right{display:flex;flex-direction:column;gap:18px}
+    .music-control{display:flex;gap:12px;align-items:center}
+    .btn{background:linear-gradient(90deg,var(--accent),var(--accent2));padding:12px 16px;border-radius:12px;color:#111;font-weight:700;border:none;cursor:pointer;transition:transform .2s ease;}
+    .btn:hover{transform:scale(1.05);}
+
+    .falling{pointer-events:none;position:absolute;inset:0;z-index:3;overflow:hidden}
+    .falling img{position:absolute;width:100px;height:100px;object-fit:cover;border-radius:14px;box-shadow:0 10px 28px rgba(255,107,159,0.5);opacity:0.95;filter:drop-shadow(0 0 6px #ffdc8a);}
+
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.8));z-index:50}
+    .modal .modal-card{background:linear-gradient(135deg,#1a0f2c,#3d0d45);padding:20px;border-radius:16px;max-width:960px;width:90%;display:flex;gap:20px;box-shadow:0 8px 36px rgba(255,107,159,0.4);}
+    .modal img{width:340px;height:340px;object-fit:cover;border-radius:12px;box-shadow:0 8px 24px rgba(255,220,138,0.5);}
+    .modal .meta{flex:1;color:#fff}
+
+    .game{height:140px;border-radius:12px;padding:14px;background:linear-gradient(90deg, rgba(255,107,159,0.12), rgba(255,220,138,0.05));display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+    .heart{position:absolute;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:24px;text-shadow:0 0 8px #ffdc8a,0 0 16px #ff6b9f;animation:floatHeart 4s linear infinite;}
+    @keyframes floatHeart{0%{transform:translateY(0);}100%{transform:translateY(160px);}}
+
+    footer{position:absolute;left:0;right:0;bottom:8px;text-align:center;z-index:6;opacity:0.8;font-size:13px;color:#ffdc8a;text-shadow:0 0 4px #ff6b9f;}
+
+    @media (max-width:980px){.container{grid-template-columns:1fr} .hero{padding:12px}}
+  </style>
+</head>
+<body>
+
+<div id="introScreen" style="text-align:center;padding:40px;color:#fff;">
+  <h2>Chúc mừng kỷ niệm 100 ngày yêu nhau anh iu💕</h2>
+  <h3>Bắp cute 💕BBi Chan</h3>
+  <div>Nhập đúng cả ngày yêu nhau và mật khẩu để mở điều bất ngờ phía sau nha</div>
+  
+  <!-- Trường 1: Ngày yêu nhau -->
+  <input type="date" id="dateInput" placeholder="Ngày yêu nhau" style="margin:10px;padding:8px;border-radius:6px;border:none;font-size:16px;">
+  
+  <!-- Trường 2: Mật khẩu -->
+  <input type="password" id="passInput" placeholder="Mật khẩu" style="margin:10px;padding:8px;border-radius:6px;border:none;font-size:16px;">
+  
+  <button id="startBtn" style="padding:10px 20px;border-radius:8px;border:none;background:linear-gradient(90deg,#ff6b9f,#ffdc8a);color:#111;font-weight:700;cursor:pointer;">Mở kỷ niệm</button>
+  
+  <div id="passMsg" style="color:#ffdc8a;margin-top:10px;"></div>
+</div>
+
+<div class="hero" id="mainHero">
+  <div class="falling" id="falling"></div>
+  <div class="hero-bg"></div>
+  <div class="container">
+    <div class="card">
+      <h1>Happy 100 Days 💕</h1>
+      <div class="sub">Chúc mừng kỷ niệm 100 ngày yêu nhau anh iu💕</div>
+      <div class="typing" id="typing"><div id="typingText"></div><div class="cursor"></div></div>
+      <div class="count" id="count">
+        <div class="box"><div class="num" id="daysCount">--</div><div class="lbl">Ngày yêu</div></div>
+        <div class="box"><div class="num" id="to100">--</div><div class="lbl">Còn đến 100</div></div>
+      </div>
+      <div class="gallery" id="gallery">
+        <img src="images/1.jpg" data-caption="Lần đầu gặp gỡ" alt="photo1">
+        <img src="images/2.jpg" data-caption="Buổi hẹn tối" alt="photo2">
+        <img src="images/3.jpg" data-caption="Chuyến đi cùng nhau" alt="photo3">
+        <img src="images/4.jpg" data-caption="Kỷ niệm đáng nhớ" alt="photo4">
+      </div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" id="openPopup">Gửi lời nhắn bất ngờ</button>
+        <button class="btn" id="togglePics">Bật/Tắt ảnh rơi</button>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><strong>Nhạc nền</strong><div class="sub">Bật/tắt nhạc, đổi bài</div></div>
+          <div class="music-control"><button class="btn" id="musicToggle">Play</button></div>
+
+          <!-- áp dụng vào phần nhạc hiện tại của bạn-->
+
+           <div class="card">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div><strong>Nhạc nền</strong><div class="sub">Bật/tắt nhạc, đổi bài</div></div>
+    <div class="music-control"><button class="btn" id="musicToggle">Play</button></div>
+  </div>
+  <div style="margin-top:12px">
+    <label style="font-size:13px;opacity:0.9">Bài hát Hơn cả yêu: <span id="trackName">Your Song</span></label>
+  </div>
+
+  <!-- Nút bất ngờ -->
+  <div style="margin-top:12px">
+    <button class="btn" id="surpriseBtn">Bất ngờ nữa nè -> click vô</button>
+  </div>
+</div>
+
+        </div>
+        <div style="margin-top:12px">
+          <label style="font-size:13px;opacity:0.9">Bài hát Hơn cả yêu: <span id="trackName">Your Song</span></label>
+        </div>
+      </div>
+      <div class="card game" id="game"><div>Chạm vào trái tim rơi để nhận lời yêu thương!</div></div>
+      <div class="card"><strong>Ngày yêu nhau</strong><div class="sub">Ngày cố định không thể thay đổi</div><input type="date" id="startDate" value="2025-06-21" disabled style="margin-top:8px;padding:8px;border-radius:8px;border:0;background:rgba(255,255,255,0.03);color:#fff"></div>
+    </div>
+  </div>
+  <footer>Chỉnh ảnh/music vào thư mục <code>images/</code> và <code>music/</code>. ❤️</footer>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <img src="" id="modalImg">
+    <div class="meta">
+      <h3 id="modalTitle">Lời nhắn</h3>
+      <p id="modalCaption"></p>
+      <div style="margin-top:12px"><button class="btn" id="closeModal">Đóng</button></div>
+    </div>
+  </div>
+</div>
+
+<audio id="bgMusic" loop src="music.mp3"></audio>
+
+
+<button class="btn" id="starBtn">Xem bầu trời đầy sao ✨</button>
+
+<!-- Màn bầu trời đầy sao -->
+<div id="starScreen" style="display:none;position:fixed;inset:0;background:#000;z-index:100;">
+  <canvas id="starCanvas" style="width:100%;height:100%;display:block;"></canvas>
+  <button id="backBtn" class="btn" style="position:absolute;top:20px;right:20px;">Quay lại 💕</button>
+</div>
+
+
+<script>
+
+const startBtn = document.getElementById('startBtn');
+const introScreen = document.getElementById('introScreen');
+const passMsg = document.getElementById('passMsg');
+
+// Giá trị đúng
+const correctDate = '2025-06-21'; // ngày bắt đầu yêu nhau
+const correctPass = '1';      // mật khẩu bí mật
+
+startBtn.addEventListener('click', () => {
+  const enteredDate = document.getElementById('dateInput').value;
+  const enteredPass = document.getElementById('passInput').value;
+
+  if (enteredDate === correctDate && enteredPass === correctPass) {
+    introScreen.style.display = 'none'; // ẩn màn đầu
+    initPage(); // mở trang chính
+  } else {
+    passMsg.textContent = 'Sai mật khẩu hoặc ngày yêu nhau, thử lại nha 💕';
+  }
+});
+
+
+
+// --- INIT PAGE ---
+function initPage() {
+  document.getElementById('mainHero').style.display = 'flex';
+  startTyping("Anh iu, chúc mừng 100 ngày của chúng ta! Hãy cùng nhau lưu giữ kỷ niệm nhé 💕");
+  startCounting();
+  initGallery();
+  initFallingPics();
+  initGame();
+}
+
+// --- TYPING EFFECT ---
+function startTyping(text) {
+  const typingText = document.getElementById('typingText');
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      typingText.textContent += text[i];
+      i++;
+      setTimeout(type, 60);
+    }
+  }
+  type();
+}
+
+
+
+// --- COUNTDOWN ---
+function startCounting() {
+  const startDate = new Date(document.getElementById('startDate').value);
+  const daysCount = document.getElementById('daysCount');
+  const to100 = document.getElementById('to100');
+
+  function updateCount() {
+    const now = new Date();
+    const diff = now - startDate;
+    const days = Math.floor(diff / (1000*60*60*24));
+    daysCount.textContent = days;
+    to100.textContent = Math.max(0, 100 - days);
+  }
+  updateCount();
+  setInterval(updateCount, 1000 * 60 * 60); // update mỗi giờ
+}
+
+// --- GALLERY & MODAL ---
+function initGallery() {
+  const gallery = document.getElementById('gallery');
+  const modal = document.getElementById('modal');
+  const modalImg = document.getElementById('modalImg');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalCaption = document.getElementById('modalCaption');
+  const closeModal = document.getElementById('closeModal');
+
+  gallery.querySelectorAll('img').forEach(img => {
+    img.addEventListener('click', () => {
+      modalImg.src = img.src;
+      modalCaption.textContent = img.dataset.caption;
+      modal.style.display = 'flex';
+    });
+  });
+
+  closeModal.addEventListener('click', () => modal.style.display = 'none');
+
+  document.getElementById('openPopup').addEventListener('click', () => {
+    modalTitle.textContent = "Bất ngờ cho anh 💕";
+    modalCaption.textContent = "Anh là cả thế giới của em, yêu anh thật nhiều!";
+    modalImg.src = "images/1.jpg"; // ảnh bất ngờ
+    modal.style.display = 'flex';
+  });
+}
+
+
+
+// --- FALLING PICTURES ---
+let fallingEnabled = true;
+function initFallingPics() {
+  const falling = document.getElementById('falling');
+  const pics = ['images/1.jpg','images/2.jpg','images/3.jpg','images/4.jpg'];
+
+  function createFalling() {
+    if (!fallingEnabled) return;
+    const img = document.createElement('img');
+    img.src = pics[Math.floor(Math.random()*pics.length)];
+    img.style.left = Math.random()*90 + 'vw';
+    img.style.top = '-120px';
+    img.style.width = 80 + Math.random()*40 + 'px';
+    img.style.height = img.style.width;
+    falling.appendChild(img);
+
+    let top = -120;
+    const speed = 1 + Math.random()*2;
+    function fall() {
+      top += speed;
+      img.style.top = top + 'px';
+      if (top < window.innerHeight + 100) {
+        requestAnimationFrame(fall);
+      } else {
+        falling.removeChild(img);
+      }
+    }
+    fall();
+  }
+
+  setInterval(createFalling, 800);
+
+  document.getElementById('togglePics').addEventListener('click', () => {
+    fallingEnabled = !fallingEnabled;
+  });
+}
+
+// --- MUSIC CONTROL ---
+const bgMusic = document.getElementById('bgMusic');
+document.getElementById('musicToggle').addEventListener('click', function() {
+  if (bgMusic.paused) {
+    bgMusic.play();
+    this.textContent = 'Pause';
+  } else {
+    bgMusic.pause();
+    this.textContent = 'Play';
+  }
+});
+
+// --- GAME: CLICK HEART ---
+function initGame() {
+  const game = document.getElementById('game');
+
+  function createHeart() {
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.style.left = Math.random()*90 + '%';
+    heart.style.animationDuration = 3 + Math.random()*2 + 's';
+    heart.textContent = '❤️';
+    game.appendChild(heart);
+
+    heart.addEventListener('click', () => {
+      alert('Anh iu, em yêu anh nhiều lắm 💕');
+      heart.remove();
+    });
+
+    setTimeout(()=>heart.remove(), 5000);
+  }
+
+  setInterval(createHeart, 800);
+}
+
+
+
+// --- Màn bầu trời đầy sao ---
+const starBtn = document.getElementById('starBtn');
+const starScreen = document.getElementById('starScreen');
+const mainHero = document.getElementById('mainHero');
+const backBtn = document.getElementById('backBtn');
+const starCanvas = document.getElementById('starCanvas');
+const ctx = starCanvas.getContext('2d');
+
+let stars = [];
+let starAnimation;
+
+function initStars() {
+  starCanvas.width = window.innerWidth;
+  starCanvas.height = window.innerHeight;
+  stars = [];
+  for(let i=0;i<200;i++){
+    stars.push({
+      x: Math.random()*starCanvas.width,
+      y: Math.random()*starCanvas.height,
+      r: Math.random()*2 +1,
+      alpha: Math.random(),
+      delta: Math.random()*0.02
+    });
+  }
+}
+
+function drawStars() {
+  ctx.clearRect(0,0,starCanvas.width,starCanvas.height);
+  for(const s of stars){
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
+    ctx.fill();
+    s.alpha += s.delta;
+    if(s.alpha <=0 || s.alpha>=1) s.delta*=-1;
+  }
+  starAnimation = requestAnimationFrame(drawStars);
+}
+
+// Khi nhấn nút xem sao
+starBtn.addEventListener('click', () => {
+  mainHero.style.display = 'none';
+  starScreen.style.display = 'block';
+  initStars();
+  drawStars();
+});
+
+// Quay lại hero
+backBtn.addEventListener('click', () => {
+  starScreen.style.display = 'none';
+  mainHero.style.display = 'flex';
+  cancelAnimationFrame(starAnimation);
+});
+
+// document.getElementById('surpriseBtn').addEventListener('click', () => {
+//   window.location.href = 'surprise.html';
+// });
+
+
+// index.html m3 
+// trong index.html
+document.getElementById('surpriseBtn').addEventListener('click', () => {
+  sessionStorage.setItem('fromScreen', 'm2'); // lưu thông tin màn 2
+  window.location.href = 'surprise.html';
+});
+window.addEventListener('DOMContentLoaded', () => {
+  if (location.hash === '#m2') {
+    document.getElementById('introScreen').style.display = 'none';
+    document.getElementById('mainHero').style.display = 'flex';
+  }
+});
+
+
+
+
+
+
+
+</script>
+
+
